@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpParams, HttpResponse } from "@angular/common/http";
 import { throwError } from 'rxjs';
 import { retry, catchError, tap  } from 'rxjs/operators';
+import { Product } from './product';
 
 
 @Injectable({
@@ -21,9 +22,17 @@ export class DataService {
   public sendGetRequest(){
     // Add safe, URL encoded _page and _limit parameters 
 
-    return this.httpClient.get(this.REST_API_SERVER, {  params: new HttpParams({fromString: "_page=1&_limit=20"}), observe: "response"}).pipe(retry(3), catchError(this.handleError), tap(res => {
+    return this.httpClient.get<Product[]>(this.REST_API_SERVER, {  params: new HttpParams({fromString: "_page=1&_limit=20"}), observe: "response"}).pipe(retry(3), catchError(this.handleError), tap(res => {
       console.log(res.headers.get('Link'));
       this.parseLinkHeader(res.headers.get('Link'));
+    }));
+  }
+
+  public sendGetRequestToUrl(url: string){
+    return this.httpClient.get<Product[]>(url, { observe: "response"}).pipe(retry(3), catchError(this.handleError), tap(res => {
+      console.log(res.headers.get('Link'));
+      this.parseLinkHeader(res.headers.get('Link'));
+
     }));
   }
 
@@ -61,11 +70,5 @@ export class DataService {
     this.next   = links["next"]; 
   }
 
-  public sendGetRequestToUrl(url: string){
-    return this.httpClient.get(url, { observe: "response"}).pipe(retry(3), catchError(this.handleError), tap(res => {
-      console.log(res.headers.get('Link'));
-      this.parseLinkHeader(res.headers.get('Link'));
-
-    }));
-  }
+  
 }
