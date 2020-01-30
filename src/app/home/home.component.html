@@ -1,1 +1,20 @@
-<p>home works!</p>
+<div style="padding: 13px;">
+    <mat-spinner *ngIf="products.length === 0"></mat-spinner>
+
+    <mat-card *ngFor="let product of products" style="margin-top:10px;">
+        <mat-card-header>
+            <mat-card-title>{{product.name}}</mat-card-title>
+            <mat-card-subtitle>{{product.price}} $/ {{product.quantity}}
+            </mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+            <p>
+                {{product.description}}
+            </p>
+            <img style="height:100%; width: 100%;" src="{{ product.imageUrl }}" />
+        </mat-card-content>
+        <mat-card-actions>
+            <button mat-button> Buy product</button>
+        </mat-card-actions>
+    </mat-card>
+</div>
