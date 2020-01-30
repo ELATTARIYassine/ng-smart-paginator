@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpErrorResponse, HttpParams } from "@angular/common/http";
+import { HttpClient, HttpErrorResponse, HttpParams, HttpResponse } from "@angular/common/http";
 import { throwError } from 'rxjs';
 import { retry, catchError, tap  } from 'rxjs/operators';
 
@@ -59,5 +59,13 @@ export class DataService {
     this.last   = links["last"];
     this.prev   = links["prev"];
     this.next   = links["next"]; 
+  }
+
+  public sendGetRequestToUrl(url: string){
+    return this.httpClient.get(url, { observe: "response"}).pipe(retry(3), catchError(this.handleError), tap(res => {
+      console.log(res.headers.get('Link'));
+      this.parseLinkHeader(res.headers.get('Link'));
+
+    }));
   }
 }
